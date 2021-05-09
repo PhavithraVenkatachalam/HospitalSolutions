@@ -1,18 +1,28 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
- class Patient {	
+ enum Location{
+	banglore,
+	chennai,
+	coimbatore;
+ }
+
+class Patient {	
 	private String patient_Name;
 	private String patient_ID;
-	private String patinet_Location;
-	private String dateOfRegestration;
+	private Location patinet_Location;
+	private List<Visit> patientVisitDate;
 	
-	public Patient(String ID,String name,String location,String registrationDate)
+	
+	public Patient(String ID,String name,Location location)
 	{
 		patient_ID=ID;
 		patient_Name=name;
 		patinet_Location=location;
-		dateOfRegestration=registrationDate;
-		
+		patientVisitDate=new ArrayList<>();
 	}
+	
 	public String getPatientId()
 	{
 		return patient_ID;
@@ -23,14 +33,28 @@
 		return patient_Name;
 	}
 	
-	public String getPatientLocation()
+	public Location getPatientLocation()
 	{
 		return patinet_Location;
 	}
 	
-	public String getPatientDateOfRegistration()
+	public void addVisitDates(Visit...visits)
 	{
-		return dateOfRegestration;
+		Arrays.stream(visits).forEach( v->{
+			patientVisitDate.add(v);
+		});
 	}
+	
+	public List<Visit> getVisitList()
+	{
+		return patientVisitDate;
+	}
+	
+	
+	public void patientTotalVisit()
+	{
+		System.out.println(patientVisitDate.size());
+	}
+	
 
 }

@@ -1,77 +1,116 @@
+import java.time.LocalDate;
+import java.util.ArrayList;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class testHospitalSolutions {
-	
-    public enum Location{
-    	banglore,
-    	coimbatore,
-    	delhi;
-    }
-	
-	@Test
-	public void testHospitalSolutionsFuctionality()
+
+	int tenure;
+	Visit visit1,visit2,visit3,visit4;
+
+	@BeforeClass
+	public void Visits()
 	{
-		Hospital apollo=new Hospital("chinniya missions one",Location.coimbatore.toString());
-		Patient Ram =new Patient("P01","Ram",Location.coimbatore.toString(),"05/05/2021");
-		Patient Promoth=new Patient("P02","Promoth",Location.coimbatore.toString(),"06/05/2021");
-		Patient Rohith  =new Patient("P03","Rohith",Location.banglore.toString(),"04/05/2021");
-		apollo.addPatientsToHashMap(Rohith,Rohith,Rohith,Promoth,Ram,Ram);
-		String result=apollo.calculateBanglorePatientPercentHashMap(3);
-		String[] percent=result.split("&");
-		Assert.assertEquals(percent[1],"66.67");
+		visit1=new Visit(LocalDate.parse("2021-05-01"),"Dr.Selvi");
+		visit2=new Visit(LocalDate.parse("2021-05-03"),"Dr.Rani");
+		visit3=new Visit(LocalDate.parse("2021-05-08"),"Dr.Sudhakar");
+		visit4=new Visit(LocalDate.parse("2021-05-07"),"Dr.Prem");
+		tenure=3;
 	}
 
-	
+	@Test
+	public void testPatientsWithOneVisit()
+	{
+		Hospital apollo=new Hospital("chinniya missions one",Location.coimbatore);
+		Patient Ram =new Patient("P01","Ram",Location.banglore);
+		Patient Promoth=new Patient("P02","Promoth",Location.coimbatore);
+		Patient Rohith  =new Patient("P03","Rohith",Location.banglore);
+		Ram.addVisitDates(visit3);
+		Promoth.addVisitDates(visit4);
+		Rohith.addVisitDates(visit4);
+		apollo.addPatientsToList(Rohith,Ram,Promoth);
+
+		double localPatientsActual=apollo.getLocalPatientPercent(3);
+		double outsidePatientsActual=apollo.getOtherPatientPercentage(localPatientsActual);
+		double localPatientsExpected=33.33;
+		double outsidePatientsExpected=66.67;
+		
+		Assert.assertEquals(localPatientsActual,localPatientsExpected);
+		Assert.assertEquals(outsidePatientsActual,outsidePatientsExpected);
+	}
+
+
 	@Test
 	public void testAllOutsidePatients()
 	{
-		Hospital apollo=new Hospital("chinniya missions one",Location.banglore.toString());
-		Patient Ram =new Patient("P01","Ram",Location.coimbatore.toString(),"05/05/2021");
-		Patient Promoth=new Patient("P02","Promoth",Location.coimbatore.toString(),"06/05/2021");
-		Patient Rohith  =new Patient("P03","Rohith",Location.coimbatore.toString(),"05/05/2021");
-		apollo.addPatientsToHashMap(Rohith,Rohith,Rohith,Promoth,Ram,Ram);
-		String result=apollo.calculateBanglorePatientPercentHashMap(3);
-		String[] percent=result.split("&");
+		Hospital apollo=new Hospital("chinniya missions one",Location.coimbatore);
+		Patient Ram =new Patient("P01","Ram",Location.banglore);
+		Patient Promoth=new Patient("P02","Promoth",Location.banglore);
+		Patient Rohith  =new Patient("P03","Rohith",Location.banglore);
+		Ram.addVisitDates(visit1,visit2,visit3);
+		Promoth.addVisitDates(visit1,visit2,visit3);
+		Rohith.addVisitDates(visit1,visit3,visit4);
+		apollo.addPatientsToList(Rohith,Ram,Promoth);
 		
-		Assert.assertEquals(percent[1],"0.0");
+		double localPatientsActual=apollo.getLocalPatientPercent(3);
+		double outsidePatientsActual=apollo.getOtherPatientPercentage(localPatientsActual);
+		double localPatientsExpected=0.0;
+		double outsidePatientsExpected=100.0;
+		
+		Assert.assertEquals(localPatientsActual,localPatientsExpected);
+		Assert.assertEquals(outsidePatientsActual,outsidePatientsExpected);
 	}
 	
-	@Test
-	public void testWithLocationUpperCase()
-	{
-		Hospital apollo=new Hospital("chinniya missions one","banglore");
-		Patient Ram =new Patient("P01","Ram","TN","05/05/2021");
-		Patient Promoth=new Patient("P02","Promoth","BANGLORE","06/05/2021");
-		Patient Rohith  =new Patient("P03","Rohith","BANGLORE","05/05/2021");
 
-		apollo.addPatientsToHashMap(Rohith,Rohith,Rohith,Promoth,Ram,Ram);
-		String result=apollo.calculateBanglorePatientPercentHashMap(3);
-		String[] percent=result.split("&");
-		
-		Assert.assertEquals(percent[1],"66.67");
-	}
-	
 	@Test
-	public void testWithLocationMixedCase()
+	public void testAllPatientsWithMultipleVisit()
 	{
-		Hospital apollo=new Hospital("chinniya missions one","banglore");
-		Patient Ram =new Patient("P01","Ram","TN","05/05/2021");
-		Patient Promoth=new Patient("P02","Promoth","BANgloRE","06/05/2021");
-		Patient Rohith  =new Patient("P03","Rohith","banGLORE","05/05/2021");
-		apollo.addPatientsToHashMap(Rohith,Rohith,Rohith,Promoth,Ram,Ram);
-		String result=apollo.calculateBanglorePatientPercentHashMap(3);
-		String[] percent=result.split("&");
+		Hospital apollo=new Hospital("chinniya missions one",Location.coimbatore);
+		Patient Ram =new Patient("P01","Ram",Location.banglore);
+		Patient Promoth=new Patient("P02","Promoth",Location.coimbatore);
+		Patient Rohith  =new Patient("P03","Rohith",Location.coimbatore);
+		Ram.addVisitDates(visit1,visit2,visit3);
+		Promoth.addVisitDates(visit1,visit2,visit3);
+		Rohith.addVisitDates(visit1,visit3,visit4);
+		apollo.addPatientsToList(Rohith,Ram,Promoth);
 		
-		Assert.assertEquals(percent[1],"66.67");
+		double localPatientsActual=apollo.getLocalPatientPercent(3);
+		double outsidePatientsActual=apollo.getOtherPatientPercentage(localPatientsActual);
+		double localPatientsExpected=66.67;
+		double outsidePatientsExpected=33.33;
+		
+		Assert.assertEquals(localPatientsActual,localPatientsExpected);
+		Assert.assertEquals(outsidePatientsActual,outsidePatientsExpected);
 	}
-	
+
+	@Test
+	public void testLocalPatientsWithMultipleVisit()
+	{
+		Hospital apollo=new Hospital("chinniya missions one",Location.coimbatore);
+		Patient Ram =new Patient("P01","Ram",Location.coimbatore);
+		Patient Promoth=new Patient("P02","Promoth",Location.coimbatore);
+		Patient Rohith  =new Patient("P03","Rohith",Location.coimbatore);
+		Ram.addVisitDates(visit1,visit2,visit3);
+		Promoth.addVisitDates(visit1,visit2,visit3);
+		Rohith.addVisitDates(visit1,visit3,visit4);
+		apollo.addPatientsToList(Rohith,Ram,Promoth);
+		
+		double localPatientsActual=apollo.getLocalPatientPercent(3);
+		double outsidePatientsActual=apollo.getOtherPatientPercentage(localPatientsActual);
+		double localPatientsExpected=100.0;
+		double outsidePatientsExpected=0.0;
+		
+		Assert.assertEquals(localPatientsActual,localPatientsExpected);
+		Assert.assertEquals(outsidePatientsActual,outsidePatientsExpected);
+	}
+
 	@Test
 	public void testWithZeroPatientRecord()
 	{
-		Hospital CMC_hospital=new Hospital("CMC Hospital","banglore");
-		Assert.assertFalse(CMC_hospital.addPatientsToHashMap());
+		Hospital CMC_hospital=new Hospital("CMC Hospital",Location.banglore);
+		Assert.assertFalse(CMC_hospital.addPatientsToList());
 	}
-	
+
 }

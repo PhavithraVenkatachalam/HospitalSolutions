@@ -5,11 +5,8 @@
     <classes>
       <class name="testHospitalSolutions">
         <methods>
-          <include name="testHospitalSolutionsFuctionality"/>
-          <include name="testWithLocationUpperCase"/>
-          <include name="testWithZeroPatientRecord"/>
-          <include name="testAllPatientsOutsideBanglore"/>
-          <include name="testWithLocationMixedCase"/>
+          <include name="Visits"/>
+          <include name="testPatientsWithOneVisit"/>
         </methods>
       </class> <!-- testHospitalSolutions -->
     </classes>

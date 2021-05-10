@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
  enum Location{
@@ -39,10 +40,8 @@ class Patient {
 	}
 	
 	public void addVisitDates(Visit...visits)
-	{
-		Arrays.stream(visits).forEach( v->{
-			patientVisitDate.add(v);
-		});
+	{	
+		Collections.addAll(patientVisitDate,visits);
 	}
 	
 	public List<Visit> getVisitList()

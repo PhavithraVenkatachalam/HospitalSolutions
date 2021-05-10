@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,26 +33,25 @@ public class Hospital {
 	{
 		if(args.length!=0)
 		{	
-			Arrays.stream(args).forEach((patient)-> {patientList.add(patient);} );
+			Collections.addAll(patientList,args);
 			return true;
 		}
 		return false;
 	}
 
 
-	//calculates the percentage of patients from banglore in the given tenure
+	//returns the percentage of local patients in the given tenure
 	public double getLocalPatientPercent(int tenure)
 	{	
-		double localPercent=calculateLocalPatientsPercent(patientList,tenure);
-		localPercent =Double.parseDouble(new DecimalFormat("##.##").format(localPercent));		
-		return localPercent;
+		double localPercent=calculateLocalPatientsPercent(patientList,tenure);		
+		return Double.parseDouble(new DecimalFormat("##.##").format(localPercent));
 	}
 
-	//returns the percentage of local patients
+	//returns the percentage of outside patients
 	public double getOtherPatientPercentage(double localPercent)
 	{
-		double otherPercent=Double.parseDouble(new DecimalFormat("##.##").format(100-localPercent));
-		return otherPercent;
+		
+		return Double.parseDouble(new DecimalFormat("##.##").format(100-localPercent));
 	}
 
 	//calculates the local patient percentage
@@ -59,12 +59,12 @@ public class Hospital {
 	{
 
 		List<Patient> patientsInTenure=patientsInfo.stream()
-				.filter(patient -> hasPatientVisitedInGivenTenure(patient,tenure)==true)
-				.collect(Collectors.toList());
+												   .filter(patient -> hasPatientVisitedInGivenTenure(patient,tenure))
+												   .collect(Collectors.toList());
 
 		int localPatientsInTenure=(int) patientsInTenure.stream()
-				.filter(patient -> isPatientLocal(patient)==true)
-				.count();
+														.filter(patient -> isPatientLocal(patient))
+														.count();
 
 		return (double)localPatientsInTenure/(double)patientsInTenure.size()*100;
 	}
@@ -73,7 +73,9 @@ public class Hospital {
 	public boolean hasPatientVisitedInGivenTenure(Patient patient,int tenure)
 	{
 		List<Visit> visits=patient.getVisitList();
-		Optional<Visit> hasVisited=visits.stream().filter(v -> (calculateDateDifference(v.getVisitDate(),tenure)==true)).findAny();
+		Optional<Visit> hasVisited=visits.stream()
+				                         .filter(v -> (calculateDateDifference(v.getVisitDate(),tenure)))
+				                         .findAny();
 		return hasVisited.isPresent();
 	}
 
@@ -92,14 +94,10 @@ public class Hospital {
 
 
 	//Check if the Patients visit date falls with the tenure
-	private boolean calculateDateDifference(LocalDate pDate,int tenure)
+	private boolean calculateDateDifference(LocalDate patientVisitDate,int tenure)
 	{
-		Date date = new Date();
-		ZoneId defaultZoneId = ZoneId.systemDefault();
-		Instant instant = date.toInstant();	
-		LocalDate todayDate = instant.atZone(defaultZoneId).toLocalDate();
-
-		long daysBetween = ChronoUnit.DAYS.between(pDate, todayDate);
+		LocalDate today = LocalDate.now();  
+		long daysBetween = ChronoUnit.DAYS.between(patientVisitDate, today);
 		if(daysBetween<0)
 		{
 			daysBetween=-daysBetween;

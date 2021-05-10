@@ -59,12 +59,12 @@ public class Hospital {
 	{
 
 		List<Patient> patientsInTenure=patientsInfo.stream()
-												   .filter(patient -> hasPatientVisitedInGivenTenure(patient,tenure))
-												   .collect(Collectors.toList());
+							        .filter(patient -> hasPatientVisitedInGivenTenure(patient,tenure))
+									.collect(Collectors.toList());
 
 		int localPatientsInTenure=(int) patientsInTenure.stream()
-														.filter(patient -> isPatientLocal(patient))
-														.count();
+									.filter(patient -> isPatientLocal(patient))
+									.count();
 
 		return (double)localPatientsInTenure/(double)patientsInTenure.size()*100;
 	}
@@ -74,8 +74,8 @@ public class Hospital {
 	{
 		List<Visit> visits=patient.getVisitList();
 		Optional<Visit> hasVisited=visits.stream()
-				                         .filter(v -> (calculateDateDifference(v.getVisitDate(),tenure)))
-				                         .findAny();
+				                   .filter(v -> (calculateDateDifference(v.getVisitDate(),tenure)))
+				                   .findAny();
 		return hasVisited.isPresent();
 	}
 
